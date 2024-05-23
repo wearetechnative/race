@@ -5,7 +5,7 @@ rprompt_config="true"
 aws_sso="false"
 aws_mfa="false"
 
-totpScript="rbw-menu.sh code aws"
+totpCommand="./rbw-menu.sh -t code -q aws"
 
 
 mkdir -p ~/.config/aws-profile-select/
@@ -134,8 +134,10 @@ function mfa {
   if [[ ${expiration_date} -lt ${date_now_future} ]]; then
     if [[ ! -z ${mfa_arn} ]]; then
       echo aws-mfa --profile ${source_profile} --force --device ${mfa_arn}
-      if [[ ! -z $totpScript ]]; then ${totpScript}; fi
-      aws-mfa --profile ${source_profile} --force --device ${mfa_arn}
+      if [[ ! -z $totpCommand ]]; then  ${totpCommand} |aws-mfa --profile ${source_profile} --force --device ${mfa_arn} 
+      else
+       aws-mfa --profile ${source_profile} --force --device ${mfa_arn}
+      fi
     else
       echo "!! MFA_arn not found. Can't renew session"
     fi

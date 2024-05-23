@@ -1,12 +1,54 @@
 #!/usr/bin/env sh
 
+itemType=""
+itemQuery=""
 
-clipboardEditor="pbcopy"
+while getopts 't:q:' opt; do
+  case "$opt" in
+  t) 
+    itemType="$OPTARG" 
+  ;;
+  q) 
+    itemQuery="$OPTARG" 
+  ;;
+  esac
+done
+shift "$(($OPTIND - 1))"
+
+# Check for mandatory variables
+ 
+check_variables() {
+    local var_names=("$@")  # Namen van de variabelen
+    local all_vars_set=true  # Standaard gaan we ervan uit dat alle variabelen zijn ingesteld
+
+    # Itereer door de namen van de variabelen
+    for var_name in "${var_names[@]}"; do
+        # Haal de waarde van de variabele op
+        local value="${!var_name}"
+
+        # Controleer of de waarde van de variabele leeg is
+        if [ -z "$value" ]; then
+            echo "$var_name is niet gevuld. Het script stopt."
+            all_vars_set=false
+            break
+        fi
+    done
+
+    # Als alle variabelen zijn ingesteld, gaat het script door
+    if [[ -z $all_vars_set ]] ; then
+        exit 
+    fi
+}
+
+check_variables itemType itemQuery
+
+
+
 
 set -eu
 
-itemType="$1"
-itemQuery="$2"
+#itemType="$1"
+#itemQuery="$2"
 
 
 #RBW_MENU_COMMAND="gum filter"
@@ -46,8 +88,4 @@ code)
 	;;
 esac
 
-if [[ ! -z ${clipboardEditor} ]]; then
-  echo "clipboard"
-  echo ${rbwOutput} | pbcopy #$(which ${clipboardEditor})
-fi
-  echo ${rbwOutput}
+echo ${rbwOutput}
