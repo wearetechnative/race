@@ -128,7 +128,6 @@ function mfa {
   #  expiration_date=$(${dateCmd}  "%Y-%m-%d %H:%M:%S" "$(sed -n -e "/\[${source_profile}\]/,/^$/ s/^[[:space:]]*expiration[[:space:]]*=[[:space:]]*\(.*\)/\1/p" ${HOME}/.aws/credentials)" "+%s" 2>/dev/null)
   date_now=$(date +%s)
   date_now_future=$((date_now + 1800))
-  echo " DEBUG: $date_now_future" 
   mfa_arn=$(sed -n -e "/\[${source_profile_longterm}\]/,/^$/ s/^[[:space:]]*aws_mfa_device[[:space:]]*=[[:space:]]*\(.*\)/\1/p" ${HOME}/.aws/credentials)
 
   if [[ ${expiration_date} -lt ${date_now_future} ]]; then
