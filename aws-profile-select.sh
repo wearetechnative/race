@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
-# Version: 202404102
-# bla
+# Version: 202405081
 
 rprompt_config="true"
 aws_sso="false"
 aws_mfa="false"
+
+totpCommand="./rbw-menu.sh -t code -q aws"
+
 
 mkdir -p ~/.config/aws-profile-select/
 
@@ -125,12 +127,17 @@ function mfa {
 
   #  expiration_date=$(${dateCmd}  "%Y-%m-%d %H:%M:%S" "$(sed -n -e "/\[${source_profile}\]/,/^$/ s/^[[:space:]]*expiration[[:space:]]*=[[:space:]]*\(.*\)/\1/p" ${HOME}/.aws/credentials)" "+%s" 2>/dev/null)
   date_now=$(date +%s)
+  date_now_future=$((date_now + 1800))
+  echo " DEBUG: $date_now_future" 
   mfa_arn=$(sed -n -e "/\[${source_profile_longterm}\]/,/^$/ s/^[[:space:]]*aws_mfa_device[[:space:]]*=[[:space:]]*\(.*\)/\1/p" ${HOME}/.aws/credentials)
 
-  if [[ ${expiration_date} -lt ${date_now} ]]; then
+  if [[ ${expiration_date} -lt ${date_now_future} ]]; then
     if [[ ! -z ${mfa_arn} ]]; then
       echo aws-mfa --profile ${source_profile} --force --device ${mfa_arn}
-      aws-mfa --profile ${source_profile} --force --device ${mfa_arn}
+      if [[ ! -z $totpCommand ]]; then  ${totpCommand} |aws-mfa --profile ${source_profile} --force --device ${mfa_arn} 
+      else
+       aws-mfa --profile ${source_profile} --force --device ${mfa_arn}
+      fi
     else
       echo "!! MFA_arn not found. Can't renew session"
     fi
@@ -170,9 +177,9 @@ function read_selection {
 function check_sdk {
   # Set AWS_SDK_LOAD_CONFIG to true to make this useful for tools such as Terraform and Serverless framework
   if (($sdk == 1)); then
-    export AWS_SDK_LOAD_CONFIG=1
+    export AWS_SDK_LOAD_CONFIG=true
   else
-    export AWS_SDK_LOAD_CONFIG=0
+    export AWS_SDK_LOAD_CONFIG=false
   fi
 }
 
