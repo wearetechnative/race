@@ -47,7 +47,6 @@ code)
 esac
 
 if [[ ! -z ${clipboardEditor} ]]; then
-  echo "clipboard"
   echo ${rbwOutput} | pbcopy #$(which ${clipboardEditor})
 fi
   echo ${rbwOutput}
