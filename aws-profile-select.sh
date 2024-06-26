@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Version: 202405081
+# fork: https://github.com/jprice-da15252/aws-profile-select
 
 rprompt_config="true"
 aws_sso="false"
@@ -55,7 +56,7 @@ profiles_len=${#profiles[*]}
 function main {
   # parse_arguments
   printf "Current value of AWS_SDK_LOAD_CONFIG: ${AWS_SDK_LOAD_CONFIG}\n"
-  echo ------------- AWS Profile Select-O-Matic -------------
+  echo ------------- AWS Profile Selector -------------
   if [ -z "$AWS_PROFILE" ]; then
     printf "No profile set yet\n\n"
   else
