@@ -5,7 +5,7 @@ rprompt_config="true"
 aws_sso="false"
 aws_mfa="false"
 
-totpCommand="./rbw-menu.sh -t code -q aws"
+totpCommand="rbw-menu.sh -t code -q aws"
 
 
 mkdir -p ~/.config/aws-profile-select/

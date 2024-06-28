@@ -2,7 +2,7 @@
 
 shell_users=("root" "ubuntu" "ec2_user" "other")
 
-while getopts 'i:u:' opt; do
+while getopts 'k:u:' opt; do
   case "$opt" in
   k)
     sshKey="$OPTARG"
@@ -67,8 +67,6 @@ fi
 instance=$(echo "$instances" | gum filter)
 instance_name=$(echo $instance | cut -f 1 -d " ")
 ssh $sshKey $user@$instance_name
-else
-echo "!! No AWS_PROFILE or AWS_DEFAULT_REGION set"
 
 # execute AWS CLI-command to retrieve info about EC2-instances. Exit when command fails
 aws_output=$(aws ec2 describe-instances 2>/dev/null)
