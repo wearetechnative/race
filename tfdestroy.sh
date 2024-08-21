@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 TF_ENV=$(echo $TF_BACKEND | awk -F '.' '{print $1}' 2>&1)
 TF_VARS=$(find . -type f -name "*.tfvars")
