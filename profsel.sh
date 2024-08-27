@@ -23,11 +23,11 @@ console(){
   checkdeps "assumego"
   checkdeps "gum"
 
-  GROUP=`./jsonify-aws-dotfiles | jq -r '[.config[].group]| unique| sort| .[]' | grep -v null | gum choose`
+  GROUP=`jsonify-aws-dotfiles | jq -r '[.config[].group]| unique| sort| .[]' | grep -v null | gum choose`
 
   echo $GROUP
 
-  ACCOUNTTMP=`./jsonify-aws-dotfiles | jq "[.config | with_entries(select(.value.group == \"$GROUP\")) | to_entries[] | {\"AWS Account\": .key, \"Role\": .value.role_arn}]" | dasel -r json -w csv | gum table -w 30,70`
+  ACCOUNTTMP=`jsonify-aws-dotfiles | jq "[.config | with_entries(select(.value.group == \"$GROUP\")) | to_entries[] | {\"AWS Account\": .key, \"Role\": .value.role_arn}]" | dasel -r json -w csv | gum table -w 30,70`
   ACCOUNT=`echo $ACCOUNTTMP | cut -d ',' -f 1`
 
   GRANTED_ALIAS_CONFIGURED="true" assumego -c $ACCOUNT
