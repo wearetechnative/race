@@ -3,7 +3,7 @@
 
   inputs.nixpkgs.url = "nixpkgs/nixos-24.05";
 
-  outputs = { self, nixpkgs, jsonify-aws-dotfiles }:
+  outputs = { self, nixpkgs }:
     let
       supportedSystems = [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
