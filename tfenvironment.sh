@@ -13,49 +13,49 @@ function check_prerequisites(){
   fi
 }
 function get_current_directory() {
-# Get the current directory
-current_directory=$(pwd)
+  # Get the current directory
+  current_directory=$(pwd)
 
-# Check if the string "$(pwd)" contains 'stack'
-if [[ "$current_directory" == *"stack"* ]]; then
-  # Extract the parent directory of 'stack'
-  base_directory=$(dirname "${current_directory%stack*}stack")
-  #echo "Parent directory of 'stack': $parent_directory"
-else
-  echo "'stack' not found in the current directory path"
-  base_directory=${current_directory}
-fi
-echo "DEBUG: ${base_directory}"
+  # Check if the string "$(pwd)" contains 'stack'
+  if [[ "$current_directory" == *"stack"* ]]; then
+    # Extract the parent directory of 'stack'
+    base_directory=$(dirname "${current_directory%stack*}stack")
+    #echo "Parent directory of 'stack': $parent_directory"
+  else
+    echo "'stack' not found in the current directory path"
+    base_directory=${current_directory}
+  fi
+  echo "DEBUG: ${base_directory}"
 }
 
-function create_backend_list() {
-backends=$(find  ${base_directory} -maxdepth 3 -type f -name "*.tfbackend" | sort)
-if [[ -z ${backends} ]]; then
-  echo "!! No backends files found"
-  exit 1
-fi
+function create_environments_list() {
+  environments=$(find  ${base_directory} -maxdepth 3 -type f -name "*.tfvars.json" | sort)
+  if [[ -z ${environments} ]]; then
+    echo "!! No environments files found"
+    exit 1
+  fi
 
-backends_name=()
+  env_name=()
 
-for item in ${backends}; do
-  backends_name+=("$(basename $item)")
-done
-backends=($backends)
-backends_len=${#backends[*]}
+  for item in ${environments}; do
+    env_name+=("$(basename $item)")
+  done
+  environments=($environments)
+  envs_len=${#environments[*]}
 }
 
 IFSBAK=$IFS
 IFS=$'\n'
 IFS=$IFSBAK
 
-backends=($backends)
-backends_len=${#backends[*]}
+environments=($environments)
+envs_len=${#environments[*]}
 
 
 function main {
   check_prerequisites
   get_current_directory
-  create_backend_list
+  create_environents_list
   selection_menu
 }
 
@@ -65,28 +65,28 @@ function usage {
   # exit 1
 }
 
-function set_tfbackend_prompt {
-  TF_BACKENDPROMPTBAK=
-  TF_BACKEND=$(terraform show | grep -A2 "module.terraformbackend.module.state_lock.aws_dynamodb_table.this" | tail -1 | awk -F ":" '{print $5}')
-}
+#function set_tfbackend_prompt {
+#  TF_BACKENDPROMPTBAK=
+#  TF_BACKEND=$(terraform show | grep -A2 "module.terraformbackend.module.state_lock.aws_dynamodb_table.this" | tail -1 | awk -F ":" '{print $5}')
+#}
 
-function set_tfbackend {
+function set_tfbenv {
   backend_file=$1
-  backend_file_basename=$(basename ${backend_file}|sed 's/.tfbackend//g')
+  backend_file_basename=$(basename ${backend_file}|sed 's/.tfvars.json//g')
   if [[ -z ${backend_file} ]]; then
     echo "!!! Error backend-file"
     exit 1
   fi
-  terraform init -backend-config="${backend_file}" -reconfigure || echo "Could not set terraform backend. Not setup yet?"
+  #terraform init -backend-config="${backend_file}" -reconfigure || echo "Could not set terraform backend. Not setup yet?"
   echo ${backend_file_basename} >.terraform/tfbackend.state
   # TF_ENV=$(echo $TF_BACKEND |awk -F '.' '{print $1}')
   # export TF_ENV
 }
 
 function set_prompt {
-  echo "-: Unset TF_BACKEND"
-  for ((i = 0; i < $backends_len; i++)); do
-    echo "$i: ${backends[$i]}"
+  echo "-: Unset TF_ENVIRONMENT"
+  for ((i = 0; i < $envs_len; i++)); do
+    echo "$i: ${environments[$i]}"
   done
   read_selection
 }
@@ -98,8 +98,8 @@ function selection_menu {
 
   # Show the menu
   echo "-: Unset backend"
-  for ((i = 0; i < $backends_len; i++)); do
-    echo "$i: ${backends_name[$i]}"
+  for ((i = 0; i < $envs_len; i++)); do
+    echo "$i: ${env_name[$i]}"
   done
   read_selection
 }
@@ -123,17 +123,17 @@ function read_selection {
       echo "Deactivating backend"
       echo rm ${backend_file}
       in_range=true
-    elif (($choice >= 0)) && (($choice <= ${backends_len})); then
+    elif (($choice >= 0)) && (($choice <= ${envs_len})); then
       # Set AWS_SDK_LOAD_CONFIG to true to make this useful for tools such as Terraform and Serverless framework
 
-      echo "Activating backend ${choice}: ${backends[choice]}"
-      export TF_BACKEND="${backends[choice]}"
-      set_tfbackend ${backends[choice]} ${choice}
+      echo "Activating backend ${choice}: ${environments[choice]}"
+      export TF_BACKEND="${environments[choice]}"
+      set_tfenv ${environments[choice]} ${choice}
       in_range=true
     else
       clear
       echo Invalid selection. Select a valid profile number or press ctrl+c to exit
-      echo "-> Error:  Number must be one of 0-"$((${#backends[@]} - 1))""
+      echo "-> Error:  Number must be one of 0-"$((${#environments[@]} - 1))""
       echo
       selection_menu
     fi
