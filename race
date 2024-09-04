@@ -6,14 +6,18 @@ CMDS=();DESC=();NARGS=$#;ARG1=$1;make_command(){ CMDS+=($1);DESC+=("$2");};usage
 
 make_command "tfplan" "run tfplan in TF Standard Base"
 tfplan(){
-  ./tfplan.sh
+  tfplan.sh
 }
 
 make_command "tfapply" "run tfapply in TF Standard Base"
 tfapply(){
-  ./tfapply.sh
+  tfapply.sh
 }
 
+make_command "tfbackend" "run tfbackend in TF Standard Base"
+tfapply(){
+  tfapply.sh
+}
 
 ##### PLACE YOUR COMMANDS ABOVE #####
 
