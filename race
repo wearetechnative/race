@@ -15,8 +15,8 @@ tfapply(){
 }
 
 make_command "tfbackend" "run tfbackend in TF Standard Base"
-tfapply(){
-  tfapply.sh
+tfbackend(){
+  tfbackend.sh
 }
 
 ##### PLACE YOUR COMMANDS ABOVE #####
