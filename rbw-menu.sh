@@ -1,10 +1,15 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
+
+#set -x
 
 itemType=""
 itemQuery=""
 
-while getopts 't:q:' opt; do
+while getopts 'c:t:q:' opt; do
   case "$opt" in
+  c)
+    clipboardCommand="| $OPTARG"
+  ;;
   t) 
     itemType="$OPTARG" 
   ;;
@@ -88,4 +93,4 @@ code)
 	;;
 esac
 
-echo ${rbwOutput}
+echo "${rbwOutput}"
