@@ -3,7 +3,7 @@
 # To-Do:
 
 function show_version(){
-  version=`cat ./VERSION`
+  version=`cat $thisdir/VERSION`
   echo
   echo "    race v${version}"
   echo "    Standard Base utilities"
