@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#(C)2019-2022 Pim Snel - https://github.com/mipmip/RUNME.sh
+CMDS=();DESC=();NARGS=$#;ARG1=$1;make_command(){ CMDS+=($1);DESC+=("$2");};usage(){ printf "\nUsage: %s [command]\n\nCommands:\n" $(basename $0);line="              ";for((i=0;i<=$(( ${#CMDS[*]} -1));i++));do printf "  %s %s ${DESC[$i]}\n" ${CMDS[$i]} "${line:${#CMDS[$i]}}";done;echo;};runme(){ if test $NARGS -eq 1;then eval "$ARG1"||usage;else usage;fi;}
+
+# INCLUDE LIB
+thisdir="$(dirname "$0")"
+eval thisdir=$thisdir
+source "$thisdir/_racelib.sh"
+
+##### PLACE YOUR COMMANDS BELOW #####
+
+make_command "version" "Show race version"
+version(){
+  show_version
+}
+make_command "plan" "run tfplan in TF Standard Base"
+plan(){
+  $thisdir/tfplan.sh
+}
+
+make_command "apply" "run tfapply in TF Standard Base"
+apply(){
+  $thisdir/tfapply.sh
+}
+
+make_command "init" "run tfbackend in TF Standard Base"
+init(){
+  $thisdir/tfbackend.sh
+}
+
+##### PLACE YOUR COMMANDS ABOVE #####
+
+runme
