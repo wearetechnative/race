@@ -77,7 +77,7 @@ function set_tfbackend {
     echo "!!! Error backend-file"
     exit 1
   fi
-  terraform init -backend-config="${backend_file}" -reconfigure
+  terraform init -backend-config="${backend_file}" -reconfigure || echo "Could not set terraform backend. Not setup yet?"
   echo ${backend_file_basename} >.terraform/tfbackend.state
   # TF_ENV=$(echo $TF_BACKEND |awk -F '.' '{print $1}')
   # export TF_ENV

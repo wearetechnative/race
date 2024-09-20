@@ -1,5 +1,14 @@
-# Technative AWS/Terraform DevOps tools
-[AWS Profile Switcher](./aws-profile-select.md)
+# Race - Terraform Tools for TechNative Standard Base
 
-[Terraform Backend Switcher, and Tools](./terraform-backend-tools.md)
+This scripts make life easier for Cloud Engineers. Race is designed to work
+with TechNative Standard Base. (More info about this soon)
+
+[Terraform Backend Switcher, and Tools](./docs/terraform-backend-tools.md)
+
+
+## TODO
+
+- [ ] CI testing
+- [ ] docs
+- [ ] one command -> race [command]
 
