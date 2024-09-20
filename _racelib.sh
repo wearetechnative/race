@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
-# Version: 2024030401 - WvdT
-# To-Do:
 
 function show_version(){
-  version=`cat $thisdir/VERSION`
+  version=`cat $thisdir/VERSION-race`
   echo
   echo "    race v${version}"
   echo "    Standard Base utilities"

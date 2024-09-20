@@ -9,6 +9,8 @@ source "$thisdir/_racelib.sh"
 
 ##### PLACE YOUR COMMANDS BELOW #####
 
+make_command "usage" "Show this help."
+
 make_command "version" "Show race version"
 version(){
   show_version

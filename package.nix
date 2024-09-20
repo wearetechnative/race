@@ -20,8 +20,8 @@ stdenv.mkDerivation rec {
 
   installPhase = ''
     mkdir -p $out/bin
-
-    cp VERSION race *.sh *.py $out/bin/
+    cp VERSION-race race *.sh *.py $out/bin/
+    runHook postInstall
 
 #    wrapProgram $out/bin/ --prefix PATH : ${lib.makeBinPath buildInputs }
 #
