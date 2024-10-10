@@ -44,12 +44,6 @@ check_variables itemType itemQuery
 
 
 
-<<<<<<< HEAD
-=======
-#clipboardEditor="pbcopy"
-clipboardEditor="xclip"
->>>>>>> 3250374 (fix copy clipboard functionality)
-
 set -eu
 
 #itemType="$1"
@@ -93,11 +87,8 @@ code)
 	;;
 esac
 
-<<<<<<< HEAD
-echo ${rbwOutput}
-=======
 if [[ ! -z ${clipboardEditor} ]]; then
   echo ${rbwOutput} | ${clipboardEditor} #$(which ${clipboardEditor})
 fi
   echo ${rbwOutput}
->>>>>>> 3250374 (fix copy clipboard functionality)
+
