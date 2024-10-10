@@ -1,0 +1,7 @@
+[ ] niet aws tools verwijderen
+[ ] md tutorials in documentatie folder
+[ ] organiseren scripts in mappen (docs)
+[ ] licentie (apache)
+[ ] change-log bestand toevoegen
+[ ] overzicht in readme (install beschrijving)
+
