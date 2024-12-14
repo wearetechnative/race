@@ -74,3 +74,5 @@ function set_tf_vars(){
 
   echo "Using TF variable-file: ${TF_VAR}"
 }
+
+
