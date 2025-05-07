@@ -15,6 +15,12 @@ make_command "version" "Show race version"
 version(){
   show_version
 }
+
+make_command "elastinixkey" "Generate ssh key"
+elastinixkey(){
+  $thisdir/elastinix_ssh_keypair.sh
+}
+
 make_command "plan" "run tfplan in TF Standard Base"
 plan(){
   $thisdir/tfplan.sh
