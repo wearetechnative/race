@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+source "$thisdir/_racelib.sh"
+checkNixPresent
+
 TF_ENV=$(echo $TF_BACKEND | awk -F '.' '{print $1}' 2>&1)
 TF_VARS=$(find . -type f -name "*.tfvars")
 

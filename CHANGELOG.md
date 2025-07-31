@@ -1,5 +1,8 @@
 # Changelog Race
 
+## 0.1.3
+- add terraform command protection when project has nix files
+
 ## 0.1.1
 - fix usage
 - Feature add usage in help

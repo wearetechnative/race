@@ -13,6 +13,15 @@ function show_version(){
   echo
 }
 
+function checkNixPresent() {
+  for file in *.nix; do
+    if [[ -e "$file" ]]; then
+      echo "NIX-files found in the current directory."
+      gum confirm "Are you sure to execute terraform command?" || exit
+    fi
+  done
+}
+
 function multiple_vars() {
 
   PS3="Select a var-file number: "
