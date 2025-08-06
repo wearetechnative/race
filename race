@@ -36,6 +36,11 @@ init(){
   $thisdir/tfbackend.sh
 }
 
+make_command "nixrun" "run nix run for the selected terraform backend"
+nixrun(){
+  $thisdir/nixrun.sh
+}
+
 ##### PLACE YOUR COMMANDS ABOVE #####
 
 runme
