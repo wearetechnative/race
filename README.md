@@ -1,14 +1,6 @@
-# Race - Terraform Tools for TechNative Standard Base
+# Race - Terraform Tools for CatStack
 
 This scripts make life easier for Cloud Engineers. Race is designed to work
-with TechNative Standard Base. (More info about this soon)
+with [CatStack](https://github.com/wearetechnative/catstack).
 
 [Terraform Backend Switcher, and Tools](./docs/terraform-backend-tools.md)
-
-
-## TODO
-
-- [ ] CI testing
-- [ ] docs
-- [ ] one command -> race [command]
-
