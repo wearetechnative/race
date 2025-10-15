@@ -15,7 +15,8 @@ fi
 BACKEND_CONTENT=$(cat .terraform/tfbackend.state)
 
 # Look for a matching target in flake.nix that has the pattern: inherit <content>.*_apply;
-TARGET=$(grep -o "inherit ${BACKEND_CONTENT}.*_apply;" flake.nix 2>/dev/null | sed 's/inherit //;s/;//')
+#TARGET=$(grep -o "inherit ${BACKEND_CONTENT}.*_apply;" flake.nix 2>/dev/null | sed 's/inherit //;s/;//')
+TARGET=($(grep -Eo '\b([A-Za-z0-9_]*(apply|plan|Apply|Plan))\b' flake.nix |grep -v ^apply |sort -u |grep -i ^${BACKEND_CONTENT}))
 
 if [ -n "$TARGET" ]; then
   echo "Found target based on .terraform/tfbackend.state: $TARGET"
@@ -32,7 +33,8 @@ if [ -n "$TARGET" ]; then
 fi
 
 # Get all apply targets from flake.nix
-APPLY_TARGETS=($(awk '/inherit.*apply/ { gsub(/;/, ""); print $2 }' flake.nix))
+#APPLY_TARGETS=($(awk '/inherit.*apply/ { gsub(/;/, ""); print $2 }' flake.nix))
+APPLY_TARGETS=($(grep -Eo '\b([A-Za-z0-9_]*(apply|plan|Apply|Plan))\b' flake.nix |grep -v ^apply |sort -u ))
 
 # Function to display menu and get user choice
 display_menu_and_get_choice() {

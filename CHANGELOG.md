@@ -1,5 +1,8 @@
 # Changelog Race
 
+## 0.1.5
+- update nixrun functionality to catch t more patterns in the flake.nix
+
 ## 0.1.4
 - add nix run functionality. nixrun option will look for the terraform backup and matches it with the options available in flake.nix and starts the nix run command with the matching option.
 
