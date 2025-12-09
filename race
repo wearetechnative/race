@@ -36,6 +36,17 @@ destroy(){
   $thisdir/tfdestroy.sh
 }
 
+make_command "terraform_raw" "echo raw terraform command"
+terraform_raw(){
+  set_tf_vars
+
+  if [[ ! -z ${TF_VAR} ]]; then
+    echo "terraform [command] -var-file=${TF_VAR} $@"
+  else
+    echo "terraform [command] $@"
+  fi
+}
+
 
 make_command "init" "run tfbackend in TF Standard Base"
 init(){
