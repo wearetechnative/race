@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
+thisdir="$(dirname "$0")"
 source "$thisdir/_racelib.sh"
 checkNixPresent
 
 TF_ENV=$(echo $TF_BACKEND | awk -F '.' '{print $1}' 2>&1)
 TF_VARS=$(find . -type f -name "*.tfvars")
-
 
 if [[ -f ${TF_ENV}.tfvars ]]; then
     terraform destroy -var-file=${TF_ENV}.tfvars $@

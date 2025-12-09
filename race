@@ -31,6 +31,12 @@ apply(){
   $thisdir/tfapply.sh
 }
 
+make_command "destroy" "run tfdestroy in TF Standard Base"
+destroy(){
+  $thisdir/tfdestroy.sh
+}
+
+
 make_command "init" "run tfbackend in TF Standard Base"
 init(){
   $thisdir/tfbackend.sh
