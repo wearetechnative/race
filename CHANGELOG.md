@@ -1,5 +1,9 @@
 # Changelog Race
 
+## 0.2.1
+- add destroy command
+- add terraform_raw command
+
 ## 0.1.5
 - update nixrun functionality to catch t more patterns in the flake.nix
 

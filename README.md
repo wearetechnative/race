@@ -1,4 +1,4 @@
-# RACE - Remote AWS Code Control Executor
+# Race - Remote AWS Code Control Executor - Terraform Tools for CatStack
 
 **Tools for CatStack** (https://github.com/wearetechnative/catstack)
 
