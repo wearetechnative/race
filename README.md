@@ -2,7 +2,8 @@
 
 **Tools for CatStack** (https://github.com/wearetechnative/catstack)
 
-<img src="images/racelogo.png" style="width:200px" />
+<img src="images/image1-3.jpg" />
+
 
 
 RACE (Remote AWS Code Control Executor) is a collection of Infrastructure as Code (IaC) utilities that make life easier for Cloud Engineers. RACE is designed to work with [CatStack](https://github.com/wearetechnative/catstack) and provides an integrated CLI for managing backends, variables, and Nix workflows. Currently focused on Terraform, with future support planned for OpenTofu and other IaC tools.
