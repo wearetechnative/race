@@ -1,5 +1,10 @@
 # Changelog Race
 
+## 0.2.2
+- add shellcheck
+- add auto sync after apply
+- integrate openspec
+
 ## 0.2.1
 - add destroy command
 - add terraform_raw command
