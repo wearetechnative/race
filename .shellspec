@@ -1,0 +1,5 @@
+--shell bash
+--format progress
+--color
+--warning-as-failure
+--jobs 4

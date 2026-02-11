@@ -19,6 +19,7 @@ RACE (Remote AWS Code Control Executor) is a collection of Infrastructure as Cod
 - **Interactive CLI**: User-friendly menus for backend selection
 - **Multi-environment support**: Work seamlessly with nonprod, prod, and other environments
 - **Extensible**: Designed with future support for OpenTofu and other IaC tools in mind
+- **Git Sync**: Automatically commit, tag, and push after successful applies to keep git in sync with cloud state
 
 ## Installation
 
@@ -149,12 +150,48 @@ race nixrun
 - (Optional) Nix with flakes support
 - (Optional) gum - for better interactive prompts
 
+## Git Sync (Auto-commit after Apply)
+
+RACE can automatically commit, tag, and push your changes after a successful `terraform apply` or `nix run` apply operation. This ensures your git repository stays in sync with your deployed cloud state.
+
+### How it works
+
+1. **Pre-apply check**: Before running apply, RACE checks for untracked files. If found, the apply is blocked to ensure all changes are committed.
+2. **Post-apply sync**: After a successful apply, RACE automatically:
+   - Commits any staged changes with message: `RACE: apply {environment} {domain}`
+   - Creates a tag: `{environment}_{domain}_{YYYYMMDD-HHhMMm}` (e.g., `nonprod_01_shared_kms_20260211-14h30m`)
+   - Pushes the commit and tag to the remote
+
+### Configuration
+
+Git sync is **enabled by default**. Configure with environment variables:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `RACE_GIT_SYNC_ENABLED` | `true` | Set to `false` to disable git sync |
+| `RACE_GIT_REMOTE` | `origin` | Git remote to push to |
+| `RACE_STACK_DOMAIN` | auto-detected | Override the stack domain name in tags |
+
+### Examples
+
+```bash
+# Disable git sync for this apply
+RACE_GIT_SYNC_ENABLED=false race apply
+
+# Use a different git remote
+RACE_GIT_REMOTE=upstream race apply
+
+# Override the domain name in tags
+RACE_STACK_DOMAIN=custom_domain race apply
+```
+
 ## Safety Measures
 
 RACE includes built-in safety measures:
 
-1. **Nix projects**: When `.nix` files are detected, race asks for confirmation before executing IaC commands
-2. **Destroy protection**: The `tfdestroy` script prevents destruction of resources with names:
+1. **Git status check**: Before apply operations, RACE checks for untracked files and blocks the operation if found
+2. **Nix projects**: When `.nix` files are detected, race asks for confirmation before executing IaC commands
+3. **Destroy protection**: The `tfdestroy` script prevents destruction of resources with names:
    - backend
    - dynamodb
    - kms
@@ -178,6 +215,31 @@ RACE is built with:
 - Bash for the core scripts
 - Python for documentation generation
 - Nix for reproducible builds and distribution
+
+### Testing
+
+RACE uses [ShellSpec](https://github.com/shellspec/shellspec) for unit testing.
+
+```bash
+# Enter the development shell (includes shellspec)
+nix develop
+
+# Run all tests
+shellspec
+
+# Run tests with verbose output
+shellspec --format documentation
+
+# Run specific spec file
+shellspec spec/racelib_spec.sh
+
+# Run tests in parallel
+shellspec --jobs 4
+```
+
+Test files are located in `spec/`:
+- `spec/racelib_spec.sh` - Tests for core library functions
+- `spec/git_sync_spec.sh` - Tests for git sync functionality
 
 ### Changelog
 

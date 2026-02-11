@@ -29,7 +29,13 @@
         {
           default = pkgs.mkShell {
             buildInputs = with pkgs; [
+              shellspec
             ];
+
+            shellHook = ''
+              echo "RACE development shell"
+              echo "Run 'shellspec' to execute tests"
+            '';
           };
         });
     };

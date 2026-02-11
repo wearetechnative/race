@@ -7,7 +7,7 @@ checkNixPresent
 set_tf_vars
 
 if [[ ! -z ${TF_VAR} ]]; then
-  terraform apply -var-file=${TF_VAR} $@
+  run_apply_with_sync terraform apply -var-file=${TF_VAR} $@
 else
-  terraform apply $@
+  run_apply_with_sync terraform apply $@
 fi
