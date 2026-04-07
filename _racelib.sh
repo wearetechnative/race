@@ -90,46 +90,46 @@ function git_sync_apply() {
   echo "Git sync: Committing and tagging as ${tag}..."
 
   # Stage all modified tracked files
-  git add -u
+  # git add -u
 
   # Check if there are changes to commit
-  if git diff --cached --quiet; then
-    echo "No changes to commit. Creating tag only."
-  else
-    if ! git commit -m "$commit_msg"; then
-      echo "Warning: Git commit failed."
-      return 1
-    fi
-  fi
+  # if git diff --cached --quiet; then
+  #   echo "No changes to commit. Creating tag only."
+  # else
+  #   if ! git commit -m "$commit_msg"; then
+  #     echo "Warning: Git commit failed."
+  #     return 1
+  #   fi
+  # fi
 
   # Handle existing tag - remove locally and remotely
-  if git tag -l | grep -q "^${tag}$"; then
-    echo "Removing existing local tag: ${tag}"
-    git tag -d "$tag" 2>/dev/null || true
-  fi
+  # if git tag -l | grep -q "^${tag}$"; then
+  #   echo "Removing existing local tag: ${tag}"
+  #   git tag -d "$tag" 2>/dev/null || true
+  # fi
 
   # Remove remote tag if it exists
-  git push "${RACE_GIT_REMOTE}" --delete "$tag" 2>/dev/null || true
+  # git push "${RACE_GIT_REMOTE}" --delete "$tag" 2>/dev/null || true
 
   # Create new tag
-  if ! git tag "$tag"; then
-    echo "Warning: Failed to create tag ${tag}."
-    return 1
-  fi
+  # if ! git tag "$tag"; then
+  #   echo "Warning: Failed to create tag ${tag}."
+  #   return 1
+  # fi
 
   # Push commits and tags
-  echo "Pushing to ${RACE_GIT_REMOTE}..."
-  if ! git push "${RACE_GIT_REMOTE}"; then
-    echo "Warning: Git push failed. Local commit preserved."
-    return 1
-  fi
+  # echo "Pushing to ${RACE_GIT_REMOTE}..."
+  # if ! git push "${RACE_GIT_REMOTE}"; then
+  #   echo "Warning: Git push failed. Local commit preserved."
+  #   return 1
+  # fi
 
-  if ! git push "${RACE_GIT_REMOTE}" "$tag"; then
-    echo "Warning: Failed to push tag ${tag}."
-    return 1
-  fi
+  # if ! git push "${RACE_GIT_REMOTE}" "$tag"; then
+  #   echo "Warning: Failed to push tag ${tag}."
+  #   return 1
+  # fi
 
-  echo "Git sync complete: ${tag}"
+  echo "Git sync disabled (all git operations commented out)"
   return 0
 }
 
