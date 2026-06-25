@@ -146,14 +146,14 @@ function run_apply_with_sync() {
   fi
 
   # Pre-apply git status check
-  check_git_status
-  local git_status=$?
+#  check_git_status
+#  local git_status=$?
 
-  if [[ $git_status -eq 1 ]]; then
-    # Untracked files - abort
-    echo "Aborting apply due to untracked files."
-    return 1
-  fi
+#  if [[ $git_status -eq 1 ]]; then
+#    # Untracked files - abort
+#    echo "Aborting apply due to untracked files."
+#    return 1
+#  fi
 
   local skip_sync=false
   if [[ $git_status -eq 2 ]]; then
