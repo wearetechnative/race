@@ -1,12 +1,13 @@
 # Changelog Race
 
 ## 0.3.0
-- race apply runs nix run (apply targets only) when flake.nix exists, else terraform apply
-- add race apply --override-tf to force terraform apply without the nix-files prompt
-- race apply --override-tf announces the override; nixrun stops on --override-tf and points to race apply
+- merge apply and nixrun: race apply uses nix run (apply targets only) when flake.nix exists, else terraform apply
+- add race apply --override-tf to force terraform apply, with an override banner and without the nix-files prompt
 - race apply stops with a race init hint when flake.nix exists but no backend is selected
-- race nixrun keeps offering all plan and apply targets; backend match prefers apply, locale independent
+- race nixrun keeps all plan and apply targets, rejects --override-tf; backend match prefers apply
 - race passes arguments to its commands; unknown commands show usage
+- disable git auto sync after apply
+- migrate openspec tooling to the opsx workflow
 
 ## 0.2.2
 - add shellcheck
