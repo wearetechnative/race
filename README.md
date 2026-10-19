@@ -48,8 +48,10 @@ sudo ln -s $(pwd)/race /usr/local/bin/race
 RACE provides a unified command-line interface for all IaC utilities:
 
 ```bash
-race [command]
+race [command] [arguments]
 ```
+
+Arguments after the command are passed on to it, e.g. `race plan -out nonprod.tfplan`.
 
 ### Available commands
 
@@ -57,8 +59,9 @@ race [command]
 - `race version` - Show race version
 - `race init` - Configure backend (currently Terraform, OpenTofu support planned)
 - `race plan` - Run plan command with automatic tfvars selection
-- `race apply` - Run apply command with automatic tfvars selection
-- `race nixrun` - Run nix run for the selected backend
+- `race apply` - Run `nix run` for the selected backend when a `flake.nix` exists, otherwise terraform apply with automatic tfvars selection
+- `race apply --override-tf` - Always run terraform apply, also in a nix project
+- `race nixrun` - Run nix run for the selected backend, offering all plan and apply targets
 - `race elastinixkey` - Generate SSH keypair
 
 ### Workflow
@@ -83,18 +86,35 @@ These commands:
 - Automatically match the corresponding `.tfvars` file (e.g., `nonprod.tfbackend` → `nonprod.tfvars`)
 - Execute the IaC tool (currently Terraform) with the correct variables
 
-#### 3. Nix integration
+`race apply` picks its route from the current directory:
 
-For projects using Nix flakes:
-
-```bash
-race nixrun
+```
+race apply [--override-tf] [arguments]
+  --override-tf given      -> terraform apply (no nix-files confirmation)
+  no flake.nix             -> terraform apply
+  flake.nix, no backend    -> error: set the backend first with race init
+  flake.nix and a backend  -> nix run, apply targets only (see below)
 ```
 
-This script:
+Arguments other than `--override-tf` are passed to terraform. On the nix route
+they are ignored with a warning.
+
+#### 3. Nix integration
+
+For projects using Nix flakes, `race apply` runs the flake's apply target:
+
+```bash
+race apply
+```
+
+This:
 - Reads the active backend from `.terraform/tfbackend.state`
-- Searches for matching targets in `flake.nix`
+- Searches `flake.nix` for apply targets (names ending in `apply` or `Apply`)
+- Proposes the target matching the backend, or shows a menu of apply targets
 - Executes `nix run .#<target>` for the correct environment
+
+`race nixrun` does the same, but offers all plan and apply targets. When both
+match the backend, the apply target is proposed.
 
 ## Project Structure
 
@@ -139,7 +159,13 @@ race init
 # Select: nonprod
 
 # Run nix run (automatically matches nonprod_apply in flake.nix)
+race apply
+
+# Run a plan target from the flake instead
 race nixrun
+
+# Bypass the flake and run terraform apply directly
+race apply --override-tf
 ```
 
 ## Requirements
@@ -190,7 +216,7 @@ RACE_STACK_DOMAIN=custom_domain race apply
 RACE includes built-in safety measures:
 
 1. **Git status check**: Before apply operations, RACE checks for untracked files and blocks the operation if found
-2. **Nix projects**: When `.nix` files are detected, race asks for confirmation before executing IaC commands
+2. **Nix projects**: When `.nix` files are detected, race asks for confirmation before executing IaC commands (skipped for `race apply --override-tf`)
 3. **Destroy protection**: The `tfdestroy` script prevents destruction of resources with names:
    - backend
    - dynamodb
