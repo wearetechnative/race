@@ -1,5 +1,12 @@
 # Changelog Race
 
+## 0.3.0
+- race apply runs nix run (apply targets only) when flake.nix exists, else terraform apply
+- add race apply --override-tf to force terraform apply without the nix-files prompt
+- race apply stops with a race init hint when flake.nix exists but no backend is selected
+- race nixrun keeps offering all plan and apply targets; backend match prefers apply, locale independent
+- race passes arguments to its commands; unknown commands show usage
+
 ## 0.2.2
 - add shellcheck
 - add auto sync after apply

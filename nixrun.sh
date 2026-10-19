@@ -70,12 +70,30 @@ fi
 
 # Check if .terraform/tfbackend.state exists and get its content
 if [ ! -f ".terraform/tfbackend.state" ]; then
-  echo "Warning: Can't determine terraform backend status. .terraform/tfbackend.state not found."
+  echo "Error: No terraform backend selected. .terraform/tfbackend.state not found."
+  echo "Set the backend first: race init"
   exit 1
 fi
 
+if [[ $# -gt 0 ]]; then
+  echo "Warning: Extra arguments are ignored for nix run: $*"
+fi
+
+# RACE_NIXRUN_MODE=apply (set by race apply) offers apply targets only
+RACE_NIXRUN_MODE="${RACE_NIXRUN_MODE:-all}"
+
 BACKEND_CONTENT=$(cat .terraform/tfbackend.state)
 
+# Get the targets from flake.nix
+mapfile -t APPLY_TARGETS < <(nix_flake_targets "$RACE_NIXRUN_MODE")
+if [[ ${#APPLY_TARGETS[@]} -eq 0 ]]; then
+  if [[ "$RACE_NIXRUN_MODE" == "apply" ]]; then
+    echo "Error: No apply targets found in flake.nix."
+  else
+    echo "Error: No apply or plan targets found in flake.nix."
+  fi
+  exit 1
+fi
 
 
 
@@ -83,9 +101,9 @@ BACKEND_CONTENT=$(cat .terraform/tfbackend.state)
 
 
 
-# Look for a matching target in flake.nix that has the pattern: inherit <content>.*_apply;
-#TARGET=$(grep -o "inherit ${BACKEND_CONTENT}.*_apply;" flake.nix 2>/dev/null | sed 's/inherit //;s/;//')
-TARGET=($(grep -Eo '\b([A-Za-z0-9_]*(apply|plan|Apply|Plan))\b' flake.nix |grep -v ^apply |sort -u |grep -i ^${BACKEND_CONTENT}))
+
+# Look for a target matching the backend, preferring apply over plan
+TARGET=$(nix_backend_target "$RACE_NIXRUN_MODE" "$BACKEND_CONTENT")
 
 
 
@@ -111,10 +129,6 @@ if [ -n "$TARGET" ]; then
     # Continue to the menu below
   fi
 fi
-
-# Get all apply targets from flake.nix
-#APPLY_TARGETS=($(awk '/inherit.*apply/ { gsub(/;/, ""); print $2 }' flake.nix))
-APPLY_TARGETS=($(grep -Eo '\b([A-Za-z0-9_]*(apply|plan|Apply|Plan))\b' flake.nix |grep -v ^apply |sort -u ))
 
 # Display menu and get initial choice
 display_menu_and_get_choice

@@ -191,12 +191,85 @@ function show_version(){
 }
 
 function checkNixPresent() {
+  # race apply --override-tf already confirmed running terraform
+  if [[ "${RACE_OVERRIDE_TF:-}" == "true" ]]; then
+    return 0
+  fi
+
   for file in *.nix; do
     if [[ -e "$file" ]]; then
       echo "NIX-files found in the current directory."
       gum confirm "Are you sure to execute terraform command?" || exit
     fi
   done
+}
+
+# nix_flake_targets - List the apply/plan targets defined in ./flake.nix
+# Arguments: $1 = mode: "apply" lists apply targets only, anything else lists all
+# Output: one target per line, sorted independent of the locale
+function nix_flake_targets() {
+  local mode="${1:-all}"
+  local targets
+
+  targets=$(grep -Eo '\b([A-Za-z0-9_]*(apply|plan|Apply|Plan))\b' flake.nix 2>/dev/null | grep -v '^apply' | LC_ALL=C sort -u)
+  if [[ "$mode" == "apply" ]]; then
+    targets=$(grep -E '[Aa]pply$' <<<"$targets")
+  fi
+
+  if [[ -n "$targets" ]]; then
+    echo "$targets"
+  fi
+}
+
+# nix_backend_target - Pick the flake target matching the selected backend
+# Arguments: $1 = mode (see nix_flake_targets), $2 = backend name
+# Output: the first matching apply target, else the first matching plan target
+function nix_backend_target() {
+  local mode="$1"
+  local backend="$2"
+  local matches
+
+  if [[ -z "$backend" ]]; then
+    return 0
+  fi
+
+  matches=$(nix_flake_targets "$mode" | grep -i "^${backend}")
+  { grep -E '[Aa]pply$' <<<"$matches"; grep -Ev '[Aa]pply$' <<<"$matches"; } | head -n 1
+}
+
+# race_apply - Run nix run when ./flake.nix exists, terraform apply otherwise
+# Arguments: [--override-tf] to force terraform apply; other arguments go to the apply script
+# Returns: exit code of the apply script, 1 when flake.nix exists without a selected backend
+function race_apply() {
+  local override_tf=false
+  local args=()
+  local arg
+
+  for arg in "$@"; do
+    if [[ "$arg" == "--override-tf" ]]; then
+      override_tf=true
+    else
+      args+=("$arg")
+    fi
+  done
+
+  if [[ "$override_tf" == "true" ]]; then
+    RACE_OVERRIDE_TF=true "$thisdir/tfapply.sh" "${args[@]}"
+    return $?
+  fi
+
+  if [[ ! -f "flake.nix" ]]; then
+    "$thisdir/tfapply.sh" "${args[@]}"
+    return $?
+  fi
+
+  if [[ ! -f ".terraform/tfbackend.state" ]]; then
+    echo "Error: flake.nix found but no terraform backend selected (.terraform/tfbackend.state not found)."
+    echo "Set the backend first: race init"
+    return 1
+  fi
+
+  RACE_NIXRUN_MODE=apply "$thisdir/nixrun.sh" "${args[@]}"
 }
 
 function multiple_vars() {
