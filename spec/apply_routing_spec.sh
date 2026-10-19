@@ -69,13 +69,15 @@ EOF
       touch flake.nix
       mkdir .terraform && echo nonprod > .terraform/tfbackend.state
       When call race_apply --override-tf
-      The output should equal "tfapply.sh override=true mode= args="
+      The line 2 of output should equal "  OVERRIDE ACTIVE: --override-tf"
+      The line 5 of output should equal "tfapply.sh override=true mode= args="
     End
 
     It 'strips --override-tf from the terraform arguments'
       touch flake.nix
       When call race_apply -target=module.x --override-tf -auto-approve
-      The output should equal "tfapply.sh override=true mode= args=-target=module.x -auto-approve"
+      The line 2 of output should equal "  OVERRIDE ACTIVE: --override-tf"
+      The line 5 of output should equal "tfapply.sh override=true mode= args=-target=module.x -auto-approve"
     End
 
     It 'preserves the exit code of the apply script'
@@ -118,7 +120,8 @@ EOF
     It 'passes --override-tf through the race command'
       touch flake.nix
       When run script "$STUB_DIR/race" apply --override-tf -target=module.x
-      The output should equal "tfapply.sh override=true mode= args=-target=module.x"
+      The line 2 of output should equal "  OVERRIDE ACTIVE: --override-tf"
+      The line 5 of output should equal "tfapply.sh override=true mode= args=-target=module.x"
     End
 
     It 'keeps race nixrun in full mode'
@@ -133,6 +136,7 @@ EOF
       touch flake.nix
       echo '{}' > nonprod.tfvars.json
       When run script "$STUB_DIR/race" apply --override-tf -target=module.x
+      The output should include "OVERRIDE ACTIVE: --override-tf"
       The output should include "terraform apply -var-file="
       The output should include "nonprod.tfvars.json -target=module.x"
       The output should not include "gum confirm"

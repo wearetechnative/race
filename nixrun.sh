@@ -62,6 +62,15 @@ display_menu_and_get_choice() {
 
 
 
+# --override-tf belongs to race apply; stop instead of running nix run
+for arg in "$@"; do
+  if [[ "$arg" == "--override-tf" ]]; then
+    echo "Error: --override-tf is an option of race apply, not of nixrun."
+    echo "To run terraform apply instead of nix run, use: race apply --override-tf"
+    exit 1
+  fi
+done
+
 # Check if flake.nix exists
 if [ ! -f "flake.nix" ]; then
   echo "Error: flake.nix not found. This script must be run from a directory containing a flake.nix file."

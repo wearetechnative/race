@@ -141,6 +141,21 @@ EOF
       The status should be failure
     End
 
+    It 'stops when --override-tf is given'
+      When run script "${RACE_ROOT}/nixrun.sh" apply --override-tf
+      The output should include "--override-tf is an option of race apply"
+      The output should include "race apply --override-tf"
+      The output should not include "nix run .#"
+      The status should be failure
+    End
+
+    It 'stops on --override-tf also without flake.nix'
+      rm flake.nix
+      When run script "${RACE_ROOT}/nixrun.sh" --override-tf
+      The output should include "race apply --override-tf"
+      The status should be failure
+    End
+
     It 'warns that extra arguments are ignored'
       Data "y"
       When run script "${RACE_ROOT}/nixrun.sh" -target=module.x

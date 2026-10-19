@@ -33,7 +33,8 @@ When `flake.nix` exists but no terraform backend is selected, `race apply` SHALL
 
 #### Scenario: Override in a nix stack
 - **WHEN** the user runs `race apply --override-tf` in a directory with `flake.nix`
-- **THEN** terraform apply runs
+- **THEN** a message says `--override-tf` is used
+- **AND** terraform apply runs
 - **AND** no confirmation about nix files is asked
 
 #### Scenario: Extra arguments reach terraform
@@ -76,3 +77,12 @@ The automatic backend match SHALL prefer an apply target over a plan target for 
 - **WHEN** the backend is `nonprod`
 - **AND** `flake.nix` defines `nonprod_Plan` and `nonprod_apply`
 - **THEN** `race nixrun` proposes `nonprod_apply` under every locale
+
+### Requirement: Nixrun rejects the override flag
+`race nixrun` and `nixrun.sh` SHALL stop with a non-zero exit code when `--override-tf` is given, and SHALL point the user to `race apply --override-tf`.
+
+#### Scenario: Override passed to nixrun
+- **WHEN** the user runs `nixrun.sh apply --override-tf`
+- **THEN** an error mentions `race apply --override-tf`
+- **AND** nix run does not run
+- **AND** the exit code is non-zero

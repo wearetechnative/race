@@ -237,6 +237,21 @@ function nix_backend_target() {
   { grep -E '[Aa]pply$' <<<"$matches"; grep -Ev '[Aa]pply$' <<<"$matches"; } | head -n 1
 }
 
+# print_override_banner - Make clear that race apply --override-tf bypasses the flake
+# Bold yellow on a terminal, plain text otherwise
+function print_override_banner() {
+  local on="" off=""
+  if [[ -t 1 ]]; then
+    on=$'\e[1;33m'
+    off=$'\e[0m'
+  fi
+
+  echo "${on}=====================================================================${off}"
+  echo "${on}  OVERRIDE ACTIVE: --override-tf${off}"
+  echo "${on}  Running terraform apply directly. flake.nix and nix run are ignored.${off}"
+  echo "${on}=====================================================================${off}"
+}
+
 # race_apply - Run nix run when ./flake.nix exists, terraform apply otherwise
 # Arguments: [--override-tf] to force terraform apply; other arguments go to the apply script
 # Returns: exit code of the apply script, 1 when flake.nix exists without a selected backend
@@ -254,6 +269,7 @@ function race_apply() {
   done
 
   if [[ "$override_tf" == "true" ]]; then
+    print_override_banner
     RACE_OVERRIDE_TF=true "$thisdir/tfapply.sh" "${args[@]}"
     return $?
   fi
